@@ -10,12 +10,18 @@ import myNum
 
 class Neuron:
     once = False
+    number = 0
     def __init__(self,inputDim) :
         self.input = myNum.vector(inputDim)
         self.weight = myNum.vector(inputDim)
         self.output = 0.0
         self.goal = 0.0
         self.alpha = 0.1
+        self.activationType = 0
+        self.neuronNr = Neuron.number
+        Neuron.number = Neuron.number + 1
+    def getNeuronNr(self) :
+        return Neuron.number
     def getInputSize(self) :
         return self.input.length()
     def setRandomWeights(self) :
@@ -24,6 +30,8 @@ class Neuron:
             self.once = True
         for i in range(self.weight.length()) :
             self.weight.set(i,gauss(0,1))
+    def setActivationType(self,nr) :
+        self.activationType = nr
     def setWeights(self,weights) :
         self.weight.setVector(weights)
     def strWeights(self) :
@@ -34,9 +42,9 @@ class Neuron:
         self.goal = goal 
     def setAlpha(self,alpha) :
         self.alpha = alpha
-    def activationFunc(self,inputVal,type) :
+    def activationFunc(self,inputVal) :
         val = inputVal
-        if ( 1 == type) :
+        if ( 1 == self.activationType) :
             val =  1 / (1 + math.exp(-inputVal))
         return val
     def forwardProp(self) :
@@ -56,9 +64,20 @@ class Neuron:
         self.weight = self.weight.subVector(derivateAlpha)
         return [pred,delta,error]
 
-class NeuralNet :
-    def __init__(self,inputDim) :
-        self.a = 0
+class NeuralLayer :
+    def __init__(self,cntNeurons,cntInputs) :
+        self.neuronList = []
+        self.inputSize = cntInputs
+        for it in range(cntNeurons) :
+            self.neuronList.append(Neuron(cntInputs))
+    def getNeuron(self, nr) :
+        assert ( nr < self.getLayerSize() )
+        assert ( 0 <= nr  )
+        return self.neuronList[nr]
+    def getLayerSize(self) :
+        return len(self.neuronList)
+    def getInputSize(self) :
+        return self.inputSize
 
 def TestNeuron() :        
     n = Neuron(3)
@@ -70,7 +89,7 @@ def TestNeuron() :
     print(n.strInput())
     print(n.forwardProp())
 
-def TestBackProp() :
+def TestBackProp1() :
     n = Neuron(1)
     
     weights = myNum.vector(1)
@@ -85,4 +104,7 @@ def TestBackProp() :
     for iter in range(20) :
         print(n.backpropStep())
 
-TestBackProp()            
+def TestBackProp2() :
+    nl = NeuralLayer(1,1)
+
+TestBackProp2()            
