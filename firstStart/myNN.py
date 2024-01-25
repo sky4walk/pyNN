@@ -78,12 +78,23 @@ class NeuralLayer :
         return len(self.neuronList)
     def getInputSize(self) :
         return self.inputSize
+    def setInput(self,vecInput) :
+        for it in range(self.getLayerSize()) :
+            self.getNeuron(it).setInput(vecInput)
+    def setWeight(self,vecWeights) :
+        for it in range(self.getLayerSize()) :
+            self.getNeuron(it).setWeights(vecWeights)
+    def getOuput(self) :
+        ret = myNum.vector(self.getLayerSize())
+        for it in range(self.getLayerSize()) :
+            ret.set(it,self.neuronList[it].getOuput())
+        return ret
 
 def TestNeuron() :        
     n = Neuron(3)
     n.setRandomWeights()
     print(n.strWeights())
-    iv = myNumTest.vector(3)
+    iv = myNum.vector(3)
     iv.setArray([1,2,3])
     n.setInput(iv)
     print(n.strInput())
@@ -105,6 +116,16 @@ def TestBackProp1() :
         print(n.backpropStep())
 
 def TestBackProp2() :
-    nl = NeuralLayer(1,1)
+    input = [   [1,0,1], 
+                [0,1,1],
+                [0,0,1],
+                [0,0,1],
+                [1,1,1],
+                [0,1,1],
+                [1,0,1] ]
+    output = [0,1,0,1,1,0]
+    weights = [0.5,0.48,-0.7]
+
+    nl = NeuralLayer(3,3)
 
 TestBackProp2()            
